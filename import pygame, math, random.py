@@ -9,23 +9,16 @@ h = 720
 size = (w, h)
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
-walkTransition = pygame.time.Clock()
+jumpClock = pygame.time.Clock()
 g = 3
 OffsetX=0
-xCoord = 60
-# rightBound = leftBound + 120
 Ledge=True
 Redge=False
 pabloF = pygame.image.load("pablofront1.png").convert_alpha()
-pabloW0 = pygame.image.load("walk0.png").convert_alpha()
-pabloW1 = pygame.image.load("walk1.png").convert_alpha()
-pabloW2 = pygame.image.load("walk2.png").convert_alpha()
-pabloW3 = pabloW1
-# pabloR = pygame.image.load("pabloright1.png").convert_alpha()
+pabloR = pygame.image.load("pabloright1.png").convert_alpha()
 # for each platform...
 # (xCoord, y coordinate (in pixels), width (xCoords), height (in pixels))
 platforms = [(90,200,20,30)]
-walkFrame = 0
 
 def drawBG(act):
     global Ledge, Redge
@@ -52,37 +45,18 @@ def drawFG():
     #pass
     pygame.draw.rect(screen, "red", (0,670,1280,720))
 
-def drawChar(charX, charY, charHeight, charLen, isMoving, direction, playerClock):
-    global walkFrame
+def drawChar(charX, charY, charHeight, charLen, isMoving, direction):
     #direction True = moving right
     #direction False = moving left
     #isMoving, self explanatory
     if (not isMoving):
         char = pygame.transform.scale(pabloF, (charLen, charHeight))
         screen.blit(char, (charX,charY))
-        walkFrame = 0
     else:
-        match walkFrame:
-            case 0:
-                char = pygame.transform.scale(pabloW0, (charLen, charHeight))
-            case 1:
-                char = pygame.transform.scale(pabloW1, (charLen, charHeight))
-            case 2:
-                char = pygame.transform.scale(pabloW2, (charLen, charHeight))
-            case 3:
-                char = pygame.transform.scale(pabloW3, (charLen, charHeight))
-
-        if playerClock == 5:
-            if walkFrame == 3:
-                walkFrame = 0
-            else:
-                walkFrame += 1
-        
-        # char = pygame.transform.scale(pabloR, (charLen, charHeight))
+        char = pygame.transform.scale(pabloR, (charLen, charHeight))
         if (not direction): #moving left
             char = pygame.transform.flip(char, True, False)
         screen.blit(char, (charX,charY))
-        # walkTransition.tick(10)
     #     pygame.draw.rect(screen, "blue", (charX, charY, charLen, charHeight))
     # pygame.draw.rect(screen, "blue", (charX, charY, charLen, charHeight))
 #squareX = 100
@@ -96,7 +70,7 @@ def drawPlatforms():
         
 
 
-
+#coordinate system
 
 
 
@@ -108,7 +82,8 @@ charLen = 60
 isJumping = False
 goingUp = True
 velocity = 30
-playerClock = 0
+
+xCoord = 60
 while running:
     isMoving = False
     direction = False
@@ -128,7 +103,6 @@ while running:
         # if (Ledge and charX >= 1):
         #     charX -= 10
         isMoving = True
-        
         if ((not Ledge) and charX == 595):
             xCoord -= 1
             OffsetX += 10
@@ -136,7 +110,6 @@ while running:
             xCoord -= 1
             charX -= 10
     if keys[pygame.K_RIGHT]:
-        
         isMoving = True
         direction = True
         # if (Redge and charX <= 1190):
@@ -168,14 +141,11 @@ while running:
   
     drawFG()
 
-    leftBound = -OffsetX//10
-    rightBound = leftBound + 120
-
     drawPlatforms()
 
-    drawChar(charX, charY, charHeight, charLen, isMoving, direction, playerClock)
+    drawChar(charX, charY, charHeight, charLen, isMoving, direction)
 
-    print("\nplayer pos: ",xCoord,"\n","left bound: ", leftBound,"\nright bound: ", rightBound)
+    print(xCoord)
   
 
   # RENDER YOUR GAME HERE
@@ -184,9 +154,6 @@ while running:
     pygame.display.flip()
 
     clock.tick(60)
-    playerClock += 1
-    if playerClock > 5:
-        playerClock = 0
 
 pygame.quit()
 
