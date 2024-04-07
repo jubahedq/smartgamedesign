@@ -12,6 +12,8 @@ clock = pygame.time.Clock()
 walkTransition = pygame.time.Clock()
 g = 3
 OffsetX=0
+leftBound = -OffsetX//10
+rightBound = leftBound + 120
 xCoord = 60
 # rightBound = leftBound + 120
 Ledge=True
@@ -24,7 +26,7 @@ pabloW3 = pabloW1
 # pabloR = pygame.image.load("pabloright1.png").convert_alpha()
 # for each platform...
 # (xCoord, y coordinate (in pixels), width (xCoords), height (in pixels))
-platforms = [(90,200,20,30)]
+platforms = [(90,200,20,30),(290,550,5,15)]
 walkFrame = 0
 
 def drawBG(act):
@@ -89,15 +91,18 @@ def drawChar(charX, charY, charHeight, charLen, isMoving, direction, playerClock
 #squareY = 100
         
 def drawPlatforms():
-    global platforms
+    global platforms, leftBound, rightBound
+    for i in platforms:
+        platformL = i[0]
+        width = i[2]
+        heightpixels = i[3]
+        ypixel = i[1]
+
+        if (platformL<rightBound or platformL+width> leftBound):
+            pygame.draw.rect(screen, "red", (10*(platformL-leftBound),ypixel,width*10,heightpixels))
+            
+
     return
-
-
-        
-
-
-
-
 
 
 running = True
@@ -164,6 +169,7 @@ while running:
         # if(charY==550):
         #   isJumping==False
   #screen.fill("turquoise")
+
     drawBG(1)
   
     drawFG()
@@ -171,9 +177,10 @@ while running:
     leftBound = -OffsetX//10
     rightBound = leftBound + 120
 
-    drawPlatforms()
-
+    
     drawChar(charX, charY, charHeight, charLen, isMoving, direction, playerClock)
+
+    drawPlatforms()
 
     print("\nplayer pos: ",xCoord,"\n","left bound: ", leftBound,"\nright bound: ", rightBound)
   
