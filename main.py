@@ -15,6 +15,7 @@ OffsetX=0
 leftBound = -OffsetX//10
 rightBound = leftBound + 120
 xCoord = 60
+yCoord = 0 #worry about this later
 # rightBound = leftBound + 120
 Ledge=True
 Redge=False
@@ -26,7 +27,7 @@ pabloW3 = pabloW1
 # pabloR = pygame.image.load("pabloright1.png").convert_alpha()
 # for each platform...
 # (xCoord, y coordinate (in pixels), width (xCoords), height (in pixels))
-platforms = [(90,200,20,30),(290,550,5,15)]
+platforms = [(90,250,20,30),(69,340,20,30), (58,430,20,30), (29,520,20,30),  (290,550,5,15)]
 walkFrame = 0
 
 def drawBG(act):
@@ -100,9 +101,35 @@ def drawPlatforms():
 
         if (platformL<rightBound or platformL+width> leftBound):
             pygame.draw.rect(screen, "red", (10*(platformL-leftBound),ypixel,width*10,heightpixels))
-            
-
     return
+
+def collision(playerXL,playerY,platforms):
+    #for platform in platforms:
+    #(xCoord, y coordinate (in pixels), width (xCoords), height (in pixels))
+    global charHeight
+    canMoveLeft = True
+    canMoveRight = True
+    platformLand = False
+    platformY = 0
+    playerXR = playerXL + 6
+    for platform in platforms:
+        (platX, platY, platW, platH) = platform
+        if ((playerXR >= platX and playerXR <= (platX+platW)) or 
+            (playerXL <= (platX+platW) and (playerXL >= platX))):
+            if (playerY+charHeight <= platY):
+                platformLand = True
+                platformY = platY
+                break
+
+        if (playerY < platY+platH and playerY+charHeight >= platY):
+            if (playerXR >= platX and playerXR < (platX+platW)):
+                canMoveRight = False
+                break
+            elif (playerXL <= (platX+platW) and (playerXL > platX)):
+                canMoveLeft = False
+                break
+    return (canMoveLeft, canMoveRight, platformLand, platformY)
+
 
 
 running = True
@@ -115,6 +142,7 @@ goingUp = True
 velocity = 30
 playerClock = 0
 while running:
+    (canMoveLeft, canMoveRight, platformLand, platformY) = collision(xCoord,charY,platforms)
     isMoving = False
     direction = False
     # print(Ledge, Redge, OffsetX)
@@ -133,26 +161,27 @@ while running:
         # if (Ledge and charX >= 1):
         #     charX -= 10
         isMoving = True
-        
-        if ((not Ledge) and charX == 595):
-            xCoord -= 1
-            OffsetX += 10
-        elif (charX >= 1):
-            xCoord -= 1
-            charX -= 10
+        if canMoveLeft:
+            
+            if ((not Ledge) and charX == 595):
+                xCoord -= 1
+                OffsetX += 10
+            elif (charX >= 1):
+                xCoord -= 1
+                charX -= 10
     if keys[pygame.K_RIGHT]:
-        
         isMoving = True
         direction = True
-        # if (Redge and charX <= 1190):
-        #     charX += 10
-        if ((not Redge) and charX == 595):
-            OffsetX -= 10
-            xCoord += 1
-        elif (charX <= 1220):
-            charX += 10
-            xCoord += 1
-
+        if canMoveRight:
+            # if (Redge and charX <= 1190):
+            #     charX += 10
+            if ((not Redge) and charX == 595):
+                OffsetX -= 10
+                xCoord += 1
+            elif (charX <= 1220):
+                charX += 10
+                xCoord += 1
+    print(platformLand)
     if isJumping:
         if goingUp:
             charY -= velocity
@@ -163,9 +192,21 @@ while running:
             charY += velocity
             velocity = velocity + g
             # print(velocity)
-            if charY >= 550:
+            if platformLand and (charY+charHeight >= platformY):
+                isJumping = False
+                charY = platformY-charHeight
+            elif charY >= 550:
                 charY = 550
                 isJumping = False
+    else:
+        if (platformLand) and (charY+charHeight < platformY):
+            isJumping = True
+            velocity = 0
+            goingUp = False
+        if (not platformLand) and charY < 550:
+            isJumping = True
+            velocity = 0
+            goingUp = False
         # if(charY==550):
         #   isJumping==False
   #screen.fill("turquoise")
@@ -182,7 +223,7 @@ while running:
 
     drawPlatforms()
 
-    print("\nplayer pos: ",xCoord,"\n","left bound: ", leftBound,"\nright bound: ", rightBound)
+    # print("\nplayer pos: ",xCoord,"\n","left bound: ", leftBound,"\nright bound: ", rightBound)
   
 
   # RENDER YOUR GAME HERE
