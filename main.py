@@ -26,10 +26,12 @@ pabloW2 = pygame.image.load("walk2.png").convert_alpha()
 pabloW3 = pabloW1
 
 grasstexture = pygame.image.load("ground.png").convert()
+
+pygame.mixer.init()
 # pabloR = pygame.image.load("pabloright1.png").convert_alpha()
 # for each platform...
 # (xCoord, y coordinate (in pixels), width (xCoords), height (in pixels))
-platforms = [(124,250,20,30),(89,340,20,30), (54,430,20,30), (19,520,20,30),  (290,550,5,15)]
+platforms = [(124,250,20,30),(89,340,20,30), (33,400,20,30), (19,520,20,30),  (290,550,5,15)]
 walkFrame = 0
 
 def drawBG(act):
@@ -119,6 +121,16 @@ def collision(playerXL,playerY,platforms):
     platformLand = False
     platformY = 0
     playerXR = playerXL + 6
+    
+    for platform in platforms:
+        (platX, platY, platW, platH) = platform
+        if ((playerXR >= platX and playerXR <= (platX+platW)) or 
+            (playerXL <= (platX+platW) and (playerXL >= platX))):
+            if (playerY+charHeight <= platY):
+                platformLand = True
+                platformY = platY
+                break    
+
     for platform in platforms:
         (platX, platY, platW, platH) = platform
         if ((playerXR >= platX and playerXR <= (platX+platW)) or 
@@ -200,9 +212,13 @@ while running:
             velocity = velocity + g
             # print(velocity)
             if platformLand and (charY+charHeight >= platformY):
+                pygame.mixer.music.load("landSound.mp3")
+                pygame.mixer.music.play()
                 isJumping = False
                 charY = platformY-charHeight
             elif charY >= 550:
+                pygame.mixer.music.load("landSound.mp3")
+                pygame.mixer.music.play()
                 charY = 550
                 isJumping = False
     else:
