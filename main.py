@@ -27,7 +27,7 @@ pabloW3 = pabloW1
 # pabloR = pygame.image.load("pabloright1.png").convert_alpha()
 # for each platform...
 # (xCoord, y coordinate (in pixels), width (xCoords), height (in pixels))
-platforms = [(90,250,20,30),(69,340,20,30), (58,430,20,30), (29,520,20,30),  (290,550,5,15)]
+platforms = [(124,250,20,30),(89,340,20,30), (54,430,20,30), (19,520,20,30),  (290,550,5,15)]
 walkFrame = 0
 
 def drawBG(act):
