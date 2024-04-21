@@ -24,6 +24,8 @@ pabloW0 = pygame.image.load("walk0.png").convert_alpha()
 pabloW1 = pygame.image.load("walk1.png").convert_alpha()
 pabloW2 = pygame.image.load("walk2.png").convert_alpha()
 pabloW3 = pabloW1
+
+grasstexture = pygame.image.load("ground.png").convert()
 # pabloR = pygame.image.load("pabloright1.png").convert_alpha()
 # for each platform...
 # (xCoord, y coordinate (in pixels), width (xCoords), height (in pixels))
@@ -53,7 +55,10 @@ def drawBG(act):
        
 def drawFG():
     #pass
-    pygame.draw.rect(screen, "red", (0,670,1280,720))
+    groundstretch = pygame.image.load("groundStretch.png").convert()
+    groundstretch = pygame.transform.scale(groundstretch, (3200, 50))
+    screen.blit(groundstretch, (OffsetX,670))
+    # pygame.draw.rect(screen, "red", (0,670,1280,720))
 
 def drawChar(charX, charY, charHeight, charLen, isMoving, direction, playerClock):
     global walkFrame
@@ -100,7 +105,9 @@ def drawPlatforms():
         ypixel = i[1]
 
         if (platformL<rightBound or platformL+width> leftBound):
-            pygame.draw.rect(screen, "red", (10*(platformL-leftBound),ypixel,width*10,heightpixels))
+            ground = pygame.transform.scale(grasstexture, (width*10,heightpixels))
+            screen.blit(ground, (10*(platformL-leftBound),ypixel))
+            # pygame.draw.rect(screen, "red", (10*(platformL-leftBound),ypixel,width*10,heightpixels))
     return
 
 def collision(playerXL,playerY,platforms):
