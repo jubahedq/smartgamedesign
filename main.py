@@ -31,7 +31,7 @@ pygame.mixer.init()
 # pabloR = pygame.image.load("pabloright1.png").convert_alpha()
 # for each platform...
 # (xCoord, y coordinate (in pixels), width (xCoords), height (in pixels))
-platforms = [(124,250,20,30),(89,340,20,30), (33,400,20,30), (19,520,20,30),  (290,550,5,15)]
+platforms = [(80,250,20,30),(70,340,20,30), (33,400,20,30), (19,520,20,30),  (290,550,5,15)]
 walkFrame = 0
 
 def drawBG(act):
